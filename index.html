@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Windows 新手使用 WawAPI、CC Switch、OpenCode 与 Codex 的图文教程。">
+  <title>把一把 Key 接入你的 AI 工作台 · WawAPI 配置教程</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark">/›</span>
+      <span><span class="brand-name">KEY ROUTE</span><span class="brand-note"> · Windows 新手教程</span></span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="https://wawapii.com/" target="_blank" rel="noreferrer">打开 WawAPI ↗</a>
+      <div class="progress" aria-label="阅读进度"><span id="progress-bar"></span></div>
+    </div>
+  </header>
+
+  <div class="layout" id="top">
+    <aside class="sidebar">
+      <p class="sidebar-label">Guide / 2026</p>
+      <nav class="toc" aria-label="教程目录">
+        <a href="#start" class="active"><i>01</i>先看这篇</a>
+        <a href="#wawapi"><i>02</i>获取 API Key</a>
+        <a href="#ccswitch"><i>03</i>配置 CC Switch</a>
+        <a href="#opencode"><i>04</i>接入 OpenCode</a>
+        <a href="#codex"><i>05</i>接入 Codex</a>
+        <a href="#debug"><i>06</i>常见排错</a>
+      </nav>
+      <div class="sidebar-tip"><strong>安全提示 / KEEP PRIVATE</strong>教程截图已打码。真实 API Key 不要发到群聊、Issue 或截图里。</div>
+    </aside>
+
+    <main>
+      <section class="hero reveal" id="start">
+        <div>
+          <p class="eyebrow">A practical setup guide</p>
+          <h1>把一把 <em>Key</em><br>接入你的 AI 工作台</h1>
+          <p class="lede">从 WawAPI 拿到兼容 OpenAI 的 API 凭证，经由 CC Switch 统一管理，再让 OpenCode 与 Codex 在 Windows 上真正跑起来。</p>
+          <div class="hero-actions">
+            <a class="btn" href="#wawapi">从第一步开始 ↓</a>
+            <a class="btn ghost" href="#check">完成自检 →</a>
+          </div>
+        </div>
+        <div class="hero-terminal" aria-label="教程摘要终端卡片">
+          <div class="terminal-lines"><span class="accent">01</span> / 申请并复制 Key<br><span class="accent">02</span> / 在 CC Switch 建立供应商<br><span class="accent">03</span> / 写入 OpenCode / Codex<br><span class="accent">04</span> / 发起一次真实请求<br><br><span class="command">PS C:\&gt; echo $env:OPENAI_API_KEY</span><br><span class="accent">ready · secret stays local</span></div>
+          <span class="terminal-stamp">NO FRAMEWORK / STATIC DOC</span>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="flow-title">
+        <div class="section-heading"><div><p class="kicker">The route</p><h2 id="flow-title">先建立正确的心智模型</h2></div><p>这不是“把 Key 粘贴到一个地方”这么简单，而是把服务商、密钥管理器和客户端分成三层。</p></div>
+        <div class="flow">
+          <article class="flow-card"><span class="flow-no">01 / PROVIDER</span><h3>WawAPI</h3><p>提供模型、余额和 API 端点。这里负责创建并管理 Key。</p></article>
+          <article class="flow-card"><span class="flow-no">02 / SWITCH</span><h3>CC Switch</h3><p>保存配置、切换供应商，让多个 CLI 共用一套入口。</p></article>
+          <article class="flow-card"><span class="flow-no">03 / CLIENT</span><h3>OpenCode</h3><p>终端里的 AI 编程代理，按配置文件或环境变量发请求。</p></article>
+          <article class="flow-card"><span class="flow-no">04 / CLIENT</span><h3>Codex</h3><p>另一个客户端。重点是把 Key 放在正确的配置层，而不是项目代码里。</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="wawapi">
+        <div class="section-heading"><div><p class="kicker">Step 01 / WawAPI</p><h2>拿到 API Key</h2></div><p>截图中的账号、余额和密钥均为示例；请以你当前看到的 WawAPI 页面为准。</p></div>
+        <div class="warning"><span>!</span><p><b>先说清楚：</b>API Key 等同于密码。教程只展示脱敏后的界面，下面命令中的 <code>sk-your-key</code> 也必须替换成你自己的值，不能照抄。</p></div>
+        <div class="steps">
+          <article class="step"><div class="step-number">01</div><div><h3>登录并确认账户状态</h3><p>打开 WawAPI，登录后进入仪表盘。先确认余额、模型可用性和当前 API 端点。余额及价格会动态变化，不要把截图里的数字当成当前报价。</p><ul><li>打开 <a href="https://wawapii.com/" target="_blank" rel="noreferrer">wawapii.com</a></li><li>需要充值时，按站内支持的方式完成；金额请按自己的用量决定</li><li>首次测试优先选成本可控、响应稳定的模型</li></ul></div></article>
+          <article class="step"><div class="step-number">02</div><div><h3>进入“API 密钥”并创建密钥</h3><p>左侧点击“API 密钥”，再点击右上角“创建密钥”。建议用用途命名，例如 <code>windows-opencode</code>，以后更容易定位和撤销。</p><figure class="figure"><div class="figure-frame"><img src="assets/figures/wawapi-keys-redacted.jpg" alt="WawAPI API 密钥页面，账号信息已打码"><span class="callout endpoint">确认 API 端点</span><span class="callout secret">复制密钥</span><span class="callout import">可导入 CC Switch</span></div><figcaption class="figcaption">图 1 · 进入 API 密钥页面后，先记住端点，再复制完整 Key。示例图已对个人信息打码。</figcaption></figure></div></article>
+          <article class="step"><div class="step-number">03</div><div><h3>记录两项信息，不要记录到公开文档</h3><p>你需要保存的只有：<b>API Base URL</b> 和 <b>API Key</b>。Base URL 通常可以在 WawAPI 的 API 端点区域看到；如果服务商给出带版本路径的地址，必须完整保留。</p><div class="command-box"><button class="copy-btn" data-copy="API Base URL: https://wawapii.com/v1\nAPI Key: sk-your-key">复制模板</button><pre><span class="prompt"># 私下记录，不要提交到 Git</span>
+API Base URL: https://wawapii.com/v1
+API Key: sk-your-key</pre></div><p>如果页面提供“导入到 CCS”，可以直接导入；手动配置的原理完全相同。</p></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="ccswitch">
+        <div class="section-heading"><div><p class="kicker">Step 02 / CC Switch</p><h2>用 CC Switch 管好配置</h2></div><p>CC Switch 的价值是把供应商配置集中起来，减少你在多个客户端之间反复改环境变量的次数。</p></div>
+        <div class="steps">
+          <article class="step"><div class="step-number">04</div><div><h3>安装并进入 Codex 供应商页</h3><p>从 CC Switch 官方页面下载 Windows 版本，安装后打开。左侧选择“Codex”，顶部保持“直连”模式，再点击右上角“添加供应商”。截图中的 WAP 条目就是已经保存好的供应商示例。</p><div class="command-box"><button class="copy-btn" data-copy="https://ccswitch.io/zh/">复制官网地址</button><pre><span class="prompt">官方地址 →</span> https://ccswitch.io/zh/</pre></div><figure class="figure"><div class="figure-frame"><img src="assets/figures/ccswitch-codex-list.png" alt="CC Switch 的 Codex 供应商列表，WAP 条目处于使用中"><span class="callout cc-codex">① 选择 Codex</span><span class="callout cc-direct">② 直连模式</span><span class="callout cc-add">③ 添加供应商</span><span class="callout cc-wap">④ WAP 配置</span></div><figcaption class="figcaption">图 3 · CC Switch 的 Codex 供应商列表。WAP 条目显示“使用中”时，说明当前客户端会优先使用它。</figcaption></figure></div></article>
+          <article class="step"><div class="step-number">05</div><div><h3>新建供应商：端点 + Key + 模型</h3><p>在 CC Switch 中选择添加供应商或自定义 OpenAI 兼容服务。填写名称、Base URL 和 Key；模型名要使用 WawAPI 当前支持的模型标识，不能只凭感觉填写。</p><div class="config-grid"><div class="config-card"><h3>连接信息 <span class="badge">REQUIRED</span></h3><p>建议先只填必需项，跑通后再做高级设置。</p><div class="command-box"><pre>名称：WawAPI
+Base URL：https://wawapii.com/v1
+API Key：sk-your-key</pre></div></div><div class="config-card"><h3>选择模型 <span class="badge">CHECK LIVE</span></h3><p>从 WawAPI 模型广场或公开可用性页面复制准确的模型 ID。</p><div class="command-box"><pre>模型：your-model-id
+温度：默认
+流式：开启（若支持）</pre></div></div></div><figure class="figure"><div class="figure-frame"><img src="assets/figures/ccswitch-add-provider.png" alt="CC Switch 添加 Codex 供应商表单"><span class="callout cc-name">① 名称</span><span class="callout cc-key">② API Key</span><span class="callout cc-url">③ API 请求地址</span><span class="callout cc-model">④ 默认模型</span><span class="callout cc-save">⑤ 添加保存</span></div><figcaption class="figcaption">图 4 · 添加供应商表单。示例截图没有展示真实 API Key；实际填写时只在本机输入自己的密钥。</figcaption></figure></div></article>
+          <article class="step"><div class="step-number">06</div><div><h3>保存、启用，再观察 WawAPI 用量</h3><p>点击右下角“添加”，回到供应商列表后点击该条目的播放/启用按钮。完成一次最小请求，再回到 WawAPI 仪表盘观察请求数、Token 和余额变化。如果返回 401，优先重新复制 Key；如果返回模型不存在，先检查模型 ID。</p><figure class="figure"><div class="figure-frame"><img src="assets/figures/wawapi-dashboard-redacted.jpg" alt="WawAPI 仪表盘页面，账号信息已打码"><span class="callout endpoint">余额 / 用量</span><span class="callout secret">确认调用是否计费</span></div><figcaption class="figcaption">图 5 · 仪表盘可用来观察余额、请求数和 Token 使用量。示例图已打码。</figcaption></figure></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="opencode">
+        <div class="section-heading"><div><p class="kicker">Step 03 / OpenCode</p><h2>把配置接入 OpenCode</h2></div><p>OpenCode 支持终端、桌面端和 IDE 扩展。下面用 Windows PowerShell 讲最容易验证的路径。</p></div>
+        <div class="config-grid">
+          <article class="config-card"><h3>安装 OpenCode <span class="badge">WINDOWS</span></h3><p>从官方页面下载 Windows 版本，或按官方文档选择安装方式。安装完成后重新打开 PowerShell。</p><div class="command-box"><button class="copy-btn" data-copy="opencode --version">复制</button><pre><span class="prompt">PS C:\&gt;</span> opencode --version</pre></div><p>能看到版本号，说明命令已进入 PATH。</p></article>
+          <article class="config-card"><h3>配置 API Key <span class="badge">LOCAL</span></h3><p>如果 CC Switch 能为 OpenCode 写入配置，优先使用它；手动配置时遵循你当前 OpenCode 版本的 JSONC 配置格式。</p><div class="command-box"><button class="copy-btn" data-copy="$env:OPENAI_API_KEY = 'sk-your-key'">复制</button><pre><span class="prompt">PS C:\&gt;</span> $env:OPENAI_API_KEY = 'sk-your-key'</pre></div><p>这条命令只对当前 PowerShell 窗口生效，适合第一次快速验证。</p></article>
+        </div>
+        <div class="warning"><span>→</span><p><b>建议顺序：</b>先用临时环境变量跑通，再把长期配置交给 CC Switch 或 OpenCode 配置文件。这样出错时能快速判断到底是 Key、端点还是客户端配置的问题。</p></div>
+        <div class="command-box"><button class="copy-btn" data-copy="opencode">复制</button><pre><span class="prompt">PS C:\your-project&gt;</span> opencode</pre></div>
+      </section>
+
+      <section class="section" id="codex">
+        <div class="section-heading"><div><p class="kicker">Step 04 / Codex</p><h2>再接入 Codex</h2></div><p>Codex 的具体配置入口会随版本变化。核心仍然只有三件事：端点、Key、模型。</p></div>
+        <div class="steps">
+          <article class="step"><div class="step-number">07</div><div><h3>用 CC Switch 写入 Codex 配置</h3><p>在 CC Switch 中切换到 Codex，选择刚才建立的 WawAPI 配置并启用。若有“导入 / 导出 / 同步”按钮，先导出一份备份，再执行写入。</p><ul><li>先关闭正在运行的 Codex 终端窗口</li><li>启用配置后，重新打开 PowerShell</li><li>不要把 Key 写进项目的 <code>.env</code> 后提交到 Git</li></ul></div></article>
+          <article class="step"><div class="step-number">08</div><div><h3>验证：让客户端完成一条最小请求</h3><p>进入一个空项目或测试项目，让 Codex 执行一个无副作用的小任务，例如“列出当前目录文件”。第一次验证不要直接让它修改重要代码。</p><div class="command-box"><button class="copy-btn" data-copy="codex --version">复制</button><pre><span class="prompt">PS C:\your-project&gt;</span> codex --version</pre></div><p>如果客户端能启动但请求失败，跳到下面的排错表；不要同时更改多个参数。</p></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="debug">
+        <div class="section-heading"><div><p class="kicker">Troubleshooting</p><h2>报错时按顺序排</h2></div><p>只改一个变量，再重试一次。这样你才能知道是哪一层出了问题。</p></div>
+        <div class="faq">
+          <details open><summary>401 / invalid api key</summary><p>重新从 WawAPI 复制完整 Key；检查前后是否多了空格或引号；确认 CC Switch 当前启用的是这一条配置。不要把 Key 发给别人“帮你测试”。</p></details>
+          <details><summary>404 / model not found</summary><p>先检查模型 ID 是否来自 WawAPI 当前模型列表；再检查 Base URL 是否多写或少写了版本路径。模型名称大小写、连字符和后缀都可能影响结果。</p></details>
+          <details><summary>客户端启动，但一直没有响应</summary><p>确认 PowerShell 没有被代理、VPN 或企业网络拦截；在 WawAPI 仪表盘看请求是否到达；如果完全没有请求记录，问题通常还在本地配置层。</p></details>
+          <details><summary>改了配置但客户端仍使用旧 Key</summary><p>完全退出客户端和终端，再重新打开；确认没有同时存在系统环境变量、用户环境变量和 CC Switch 写入的配置。临时验证时优先检查当前窗口里的变量。</p></details>
+        </div>
+      </section>
+
+      <section class="section" id="check">
+        <div class="section-heading"><div><p class="kicker">Final check</p><h2>完成前自检</h2></div><p>勾选只是本地记录，刷新页面不会上传任何内容。</p></div>
+        <div class="checklist"><label class="check"><input type="checkbox"> WawAPI 页面能看到余额和可用模型</label><label class="check"><input type="checkbox"> API Key 只保存在本机私密位置</label><label class="check"><input type="checkbox"> CC Switch 配置已保存并启用</label><label class="check"><input type="checkbox"> OpenCode 能完成一次最小请求</label><label class="check"><input type="checkbox"> Codex 能启动并读取配置</label><label class="check"><input type="checkbox"> 没有把 Key 提交到 Git 或发到聊天</label></div>
+      </section>
+
+      <footer class="footer"><span>KEY ROUTE · 静态教程页 · 截图已做脱敏处理</span><span>资料入口：<a href="https://wawapii.com/llms.txt" target="_blank" rel="noreferrer">WawAPI 公开信息 ↗</a> · <a href="https://opencode.ai/zh" target="_blank" rel="noreferrer">OpenCode 官方 ↗</a></span></footer>
+    </main>
+  </div>
+  <script>
+    const progressBar = document.querySelector('#progress-bar');
+    const links = [...document.querySelectorAll('.toc a')];
+    const sections = links.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.width = `${scrollable ? Math.min(100, (window.scrollY / scrollable) * 100) : 0}%`;
+      const current = sections.reduce((active, section) => window.scrollY + 140 >= section.offsetTop ? section : active, sections[0]);
+      links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${current.id}`));
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+    document.querySelectorAll('[data-copy]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        const original = button.textContent;
+        button.textContent = '已复制';
+        setTimeout(() => button.textContent = original, 1400);
+      });
+    });
+  </script>
+</body>
+</html>
